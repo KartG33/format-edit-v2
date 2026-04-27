@@ -66,6 +66,31 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sa
 .empty-t{font-size:15px;color:var(--txt2);margin:14px 0 5px;}
 .empty-s{font-family:var(--mono);font-size:12px;}
 
+/* CARD ACTIONS */
+.card-actions{display:none;padding:0 14px 14px;}
+.card.expanded .card-actions{display:block;}
+.action-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.act-btn{
+  height:40px;border-radius:12px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--txt2);font-family:var(--mono);
+  font-size:12px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:5px;transition:all .18s;
+}
+.act-btn:active{transform:scale(.95);}
+.act-btn.edit:hover{border-color:var(--acc);color:var(--acc2);}
+.act-btn.sim:hover{border-color:var(--amber);color:var(--amber);}
+.act-btn.del:hover{border-color:var(--red);color:var(--red);}
+.similar-list{display:none;margin-top:4px;}
+.similar-list.on{display:block;}
+.sim-hdr{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.1em;margin-bottom:6px;}
+.sim-hdr span{color:var(--amber);margin-left:4px;}
+.sim-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);}
+.sim-left{display:flex;align-items:center;gap:9px;}
+.sim-ico{font-size:16px;}
+.sim-info .sim-name{font-size:13px;font-weight:600;}
+.sim-info .sim-date{font-family:var(--mono);font-size:11px;color:var(--txt2);}
+.sim-amt{font-family:var(--mono);font-size:13px;}
+
 /* TOOL BUTTONS FIXED */
 .tool-btns{
   position:fixed;
@@ -323,17 +348,95 @@ function render(){
   filtered.sort((a,b) => b.date.localeCompare(a.date)).forEach(r => {
     const div = document.createElement('div');
     div.className = 'card';
+    div.id = 'card-' + r.id;
     div.innerHTML = `
-      <div class="card-main" onclick="editEntry('${r.id}')">
+      <div class="card-main" onclick="toggleCard('${r.id}')">
         <div class="c-ico">${ico(r.service)}</div>
         <div class="c-body">
           <div class="c-top"><span class="c-name">${r.service}</span><span class="c-amt">${fa(r.amount)}</span></div>
           <div class="c-date">${fd(r.date)}</div>
         </div>
       </div>
+      <div class="card-actions">
+        <div class="action-btns">
+          <button class="act-btn edit" onclick="editEntry('${r.id}')">✏️ Ред.</button>
+          <button class="act-btn sim" onclick="findSimilar('${r.id}')">🔍 Похожие</button>
+          <button class="act-btn del" onclick="deleteInline('${r.id}')">🗑 Удалить</button>
+        </div>
+        <div class="similar-list" id="sim-${r.id}"></div>
+      </div>
     `;
     list.appendChild(div);
   });
+}
+
+let expandedId = null;
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('expanded');
+  // close previously opened
+  if (expandedId && expandedId !== id) {
+    const prev = document.getElementById('card-' + expandedId);
+    if (prev) prev.classList.remove('expanded');
+  }
+  card.classList.toggle('expanded', !isOpen);
+  expandedId = isOpen ? null : id;
+}
+
+function findSimilar(id) {
+  const payment = P.find(p => p.id === id);
+  if (!payment) return;
+  const simEl = document.getElementById('sim-' + id);
+  if (!simEl) return;
+
+  // toggle off if already showing
+  if (simEl.classList.contains('on')) {
+    simEl.classList.remove('on');
+    simEl.innerHTML = '';
+    return;
+  }
+
+  // find similar by first meaningful word
+  const words = payment.service.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  const similar = P.filter(p => {
+    if (p.id === id) return false;
+    const pl = p.service.toLowerCase();
+    return words.some(w => pl.includes(w));
+  }).sort((a,b) => b.date.localeCompare(a.date));
+
+  if (!similar.length) {
+    simEl.innerHTML = '<div style="font-family:var(--mono);font-size:12px;color:var(--txt3);padding:8px 0">Похожих не найдено</div>';
+    simEl.classList.add('on');
+    return;
+  }
+
+  simEl.innerHTML = `
+    <div class="sim-hdr">ПОХОЖИЕ <span>(${similar.length})</span></div>
+    ${similar.map(s => `
+      <div class="sim-row">
+        <div class="sim-left">
+          <div class="sim-ico">${ico(s.service)}</div>
+          <div class="sim-info">
+            <div class="sim-name">${s.service}</div>
+            <div class="sim-date">${fd(s.date)}</div>
+          </div>
+        </div>
+        <div class="sim-amt">${fa(s.amount)}</div>
+      </div>
+    `).join('')}
+  `;
+  simEl.classList.add('on');
+}
+
+async function deleteInline(id) {
+  if (!confirm('Удалить этот платеж?')) return;
+  await dbDelete(id);
+  P = P.filter(p => p.id !== id);
+  if (expandedId === id) expandedId = null;
+  render();
+  showToast('Платеж удалён');
 }
 
 function filteredRows(){
