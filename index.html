@@ -275,26 +275,84 @@
       transition: color .15s, background .15s;
     }
     .etag-del-btn:hover { color: var(--red); background: rgba(239,68,68,.1); }
-    .etag-style-input {
-      width: 100%;
+    /* ── ETAG CHIP EDITOR ── */
+    .etag-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      padding: 4px 0 2px;
+    }
+    .etag-chips-wrap.deleted {
+      opacity: .35;
+      pointer-events: none;
+    }
+    .etag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       background: var(--s3);
       border: 1px solid var(--b2);
-      border-radius: 7px;
+      border-radius: 20px;
+      padding: 4px 6px 4px 10px;
+      font: 400 11px var(--mono);
+      color: var(--text);
+      cursor: default;
+      transition: border-color .15s, background .15s;
+      max-width: 100%;
+    }
+    .etag-chip.editing {
+      border-color: var(--accent);
+      background: var(--b1);
+    }
+    .etag-chip-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+      cursor: pointer;
+    }
+    .etag-chip-del {
+      background: none;
+      border: none;
+      padding: 0 2px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: color .12s;
+      flex-shrink: 0;
+    }
+    .etag-chip-del:active { color: var(--red); }
+    /* inline input внутри чипа при редактировании */
+    .etag-chip-input {
+      background: none;
+      border: none;
+      outline: none;
       color: var(--text);
       font: 400 11px var(--mono);
-      padding: 7px 10px;
-      outline: none;
-      resize: none;
-      min-height: 34px;
-      max-height: 80px;
-      line-height: 1.5;
-      overflow-y: auto;
+      width: 120px;
+      min-width: 40px;
+      max-width: 220px;
+      padding: 0;
     }
-    .etag-style-input:focus { border-color: var(--accent); }
-    .etag-style-input.deleted {
-      text-decoration: line-through;
-      opacity: .4;
-      pointer-events: none;
+    .etag-add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px dashed var(--muted);
+      background: none;
+      color: var(--dim);
+      font: 500 11px var(--sans);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .etag-add-btn:active {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     /* ── TEMPLATES BUTTON ── */
@@ -2994,7 +3052,7 @@
       if (!text.trim()) { toast('Редактор пуст'); return; }
       const tags = parseSunoTags(text);
       if (!tags.length) { toast('Теги не найдены'); return; }
-      etagsState = tags.map(t => ({ ...t, currentStyle: t.style, deleted: false }));
+      etagsState = tags.map(t => ({ ...t, chips: t.style ? t.style.split("|").map(s => s.trim()).filter(Boolean) : [], deleted: false }));
       renderEtagsSheet();
       document.getElementById('etags-overlay').classList.add('active');
       document.getElementById('etags-sheet').classList.add('open');
@@ -3017,7 +3075,7 @@
         const card = document.createElement('div');
         card.className = 'etag-card';
 
-        // Верхняя строка: [Structural] ×N [del]
+        // Верхняя строка: [Structural] ×N [del/restore]
         const top = document.createElement('div');
         top.className = 'etag-card-top';
 
@@ -3035,7 +3093,7 @@
 
         const delBtn = document.createElement('button');
         delBtn.className = 'etag-del-btn';
-        delBtn.title = tag.deleted ? 'Восстановить' : 'Удалить style tags';
+        delBtn.title = tag.deleted ? 'Восстановить style tags' : 'Убрать все style tags';
         delBtn.textContent = tag.deleted ? '↩' : '✕';
         delBtn.onclick = () => {
           etagsState[i].deleted = !etagsState[i].deleted;
@@ -3045,53 +3103,147 @@
         top.appendChild(delBtn);
         card.appendChild(top);
 
-        // Только если тег не является чисто структурным (есть style)
-        if (tag.style || tag.currentStyle) {
-          const ta = document.createElement('textarea');
-          ta.className = 'etag-style-input' + (tag.deleted ? ' deleted' : '');
-          ta.value = tag.currentStyle;
-          ta.rows = 1;
-          ta.spellcheck = false;
-          ta.autocomplete = 'off';
-          // Auto-resize
-          ta.addEventListener('input', () => {
-            ta.style.height = 'auto';
-            ta.style.height = Math.min(ta.scrollHeight, 80) + 'px';
-            etagsState[i].currentStyle = ta.value;
-            applyEtagsLive();
-          });
-          // Init height
-          requestAnimationFrame(() => {
-            ta.style.height = 'auto';
-            ta.style.height = Math.min(ta.scrollHeight, 80) + 'px';
-          });
-          card.appendChild(ta);
-        }
+        // Chip-строка со style-тегами
+        const chipsWrap = document.createElement('div');
+        chipsWrap.className = 'etag-chips-wrap' + (tag.deleted ? ' deleted' : '');
 
+        (tag.chips || []).forEach((chipText, ci) => {
+          chipsWrap.appendChild(makeEtagChip(i, ci, chipText));
+        });
+
+        // Кнопка + добавить
+        const addBtn = document.createElement('button');
+        addBtn.className = 'etag-add-btn';
+        addBtn.textContent = '+ добавить';
+        addBtn.onclick = () => etagsAddChip(i, chipsWrap, addBtn);
+        chipsWrap.appendChild(addBtn);
+
+        card.appendChild(chipsWrap);
         body.appendChild(card);
+      });
+    }
+
+    // Создаёт один DOM-чип
+    function makeEtagChip(tagIdx, chipIdx, text) {
+      const chip = document.createElement('span');
+      chip.className = 'etag-chip';
+
+      const textSpan = document.createElement('span');
+      textSpan.className = 'etag-chip-text';
+      textSpan.textContent = text;
+      textSpan.title = 'Нажми для редактирования';
+      textSpan.onclick = () => etagsEditChip(tagIdx, chipIdx, chip, textSpan);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'etag-chip-del';
+      delBtn.textContent = '✕';
+      delBtn.title = 'Удалить';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        etagsDeleteChip(tagIdx, chipIdx);
+      };
+
+      chip.appendChild(textSpan);
+      chip.appendChild(delBtn);
+      return chip;
+    }
+
+    // Редактирование чипа: заменяем textSpan на input
+    function etagsEditChip(tagIdx, chipIdx, chip, textSpan) {
+      if (chip.classList.contains('editing')) return;
+      chip.classList.add('editing');
+
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'etag-chip-input';
+      inp.value = textSpan.textContent;
+      inp.spellcheck = false;
+      inp.autocomplete = 'off';
+      inp.style.width = Math.max(60, textSpan.offsetWidth + 8) + 'px';
+
+      chip.replaceChild(inp, textSpan);
+      inp.focus();
+      inp.select();
+
+      const commit = () => {
+        const val = inp.value.trim();
+        if (val) {
+          etagsState[tagIdx].chips[chipIdx] = val;
+        } else {
+          etagsState[tagIdx].chips.splice(chipIdx, 1);
+        }
+        applyEtagsLive();
+        renderEtagsSheet();
+      };
+
+      inp.addEventListener('blur', commit);
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+        if (e.key === 'Escape') { inp.value = etagsState[tagIdx].chips[chipIdx] || ''; inp.blur(); }
+      });
+    }
+
+    // Удаление чипа
+    function etagsDeleteChip(tagIdx, chipIdx) {
+      etagsState[tagIdx].chips.splice(chipIdx, 1);
+      applyEtagsLive();
+      renderEtagsSheet();
+    }
+
+    // Добавление нового чипа
+    function etagsAddChip(tagIdx, chipsWrap, addBtn) {
+      addBtn.style.display = 'none';
+
+      const newChip = document.createElement('span');
+      newChip.className = 'etag-chip editing';
+
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'etag-chip-input';
+      inp.placeholder = 'новый тег…';
+      inp.spellcheck = false;
+      inp.autocomplete = 'off';
+      inp.style.width = '100px';
+
+      newChip.appendChild(inp);
+      chipsWrap.insertBefore(newChip, addBtn);
+      inp.focus();
+
+      const commit = () => {
+        const val = inp.value.trim();
+        if (val) {
+          etagsState[tagIdx].chips.push(val);
+          applyEtagsLive();
+        }
+        renderEtagsSheet();
+      };
+
+      inp.addEventListener('blur', commit);
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+        if (e.key === 'Escape') { inp.value = ''; inp.blur(); }
       });
     }
 
     // Применяет текущее состояние etagsState к тексту редактора
     function applyEtagsLive() {
       let text = ed.value;
-      // Обрабатываем каждую группу тегов
       etagsState.forEach(tag => {
         const escaped = tag.raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const re = new RegExp(escaped, 'g');
         let replacement;
         if (tag.deleted) {
-          // Удалить style — оставить только [structural]
           replacement = `[${tag.structural}]`;
         } else {
-          const newStyle = tag.currentStyle.trim();
-          replacement = newStyle
-            ? `[${tag.structural} | ${newStyle}]`
+          const chips = (tag.chips || []).filter(Boolean);
+          replacement = chips.length
+            ? `[${tag.structural} | ${chips.join(' | ')}]`
             : `[${tag.structural}]`;
         }
         text = text.replace(re, replacement);
+        // Обновляем raw чтобы следующий вызов нашёл правильную строку
+        tag.raw = replacement;
       });
-      // Используем прямое присвоение чтобы не добавлять в историю при каждом символе
       ed.value = text;
       updateStats();
     }
