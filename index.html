@@ -182,6 +182,495 @@
       background: rgba(99,102,241,.28);
     }
 
+    /* ── EDIT TAGS SHEET ── */
+    .etags-sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--s1);
+      border-radius: 16px 16px 0 0;
+      border-top: 1px solid var(--b1);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    .etags-sheet.open { transform: translateY(0); }
+    .etags-handle {
+      width: 36px; height: 4px;
+      background: var(--muted);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .etags-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--b1);
+    }
+    .etags-title {
+      font: 600 14px var(--sans);
+      color: var(--text);
+    }
+    .etags-count {
+      font: 400 12px var(--sans);
+      color: var(--dim);
+    }
+    .etags-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .etags-empty {
+      color: var(--dim);
+      font: 400 13px var(--sans);
+      text-align: center;
+      padding: 32px 0;
+    }
+    .etag-card {
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .etag-card-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .etag-struct-label {
+      font: 700 12px var(--mono);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .etag-repeat-badge {
+      background: rgba(245,158,11,.15);
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: 5px;
+      color: var(--yellow);
+      font: 600 10px var(--sans);
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+    .etag-del-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--dim);
+      font-size: 13px;
+      transition: color .15s, background .15s;
+    }
+    .etag-del-btn:hover { color: var(--red); background: rgba(239,68,68,.1); }
+    .etag-style-input {
+      width: 100%;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: 7px;
+      color: var(--text);
+      font: 400 11px var(--mono);
+      padding: 7px 10px;
+      outline: none;
+      resize: none;
+      min-height: 34px;
+      max-height: 80px;
+      line-height: 1.5;
+      overflow-y: auto;
+    }
+    .etag-style-input:focus { border-color: var(--accent); }
+    .etag-style-input.deleted {
+      text-decoration: line-through;
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    /* ── TEMPLATES BUTTON ── */
+    .tpl-hdr-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: rgba(34,197,94,.1);
+      border: 1px solid rgba(34,197,94,.25);
+      border-radius: 8px;
+      color: var(--green);
+      font: 500 11px var(--sans);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .tpl-hdr-btn:active { background: rgba(34,197,94,.22); }
+
+    /* ── TEMPLATES SHEET ── */
+    .tpl-sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--s1);
+      border-radius: 16px 16px 0 0;
+      border-top: 1px solid var(--b1);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      max-height: 82vh;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    .tpl-sheet.open { transform: translateY(0); }
+    .tpl-handle {
+      width: 36px; height: 4px;
+      background: var(--muted);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .tpl-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 10px;
+      flex-shrink: 0;
+    }
+    .tpl-title {
+      font: 600 14px var(--sans);
+      color: var(--text);
+    }
+    .tpl-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tpl-empty {
+      color: var(--dim);
+      font: 400 13px var(--sans);
+      text-align: center;
+      padding: 28px 0 12px;
+    }
+    .tpl-item {
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tpl-item-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tpl-item-name {
+      flex: 1;
+      font: 600 13px var(--sans);
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tpl-use-btn {
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.3);
+      border-radius: 7px;
+      color: var(--green);
+      font: 600 11px var(--sans);
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .tpl-use-btn:active { background: rgba(34,197,94,.28); }
+    .tpl-icon-btn {
+      background: none;
+      border: none;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--dim);
+      font-size: 13px;
+      transition: color .15s, background .15s;
+    }
+    .tpl-icon-btn:hover { color: var(--text); background: var(--b1); }
+    .tpl-icon-btn.danger:hover { color: var(--red); background: rgba(239,68,68,.1); }
+    .tpl-preview {
+      font: 400 11px var(--mono);
+      color: var(--dim);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tpl-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .tpl-ph-chip {
+      background: rgba(99,102,241,.15);
+      border: 1px solid rgba(99,102,241,.25);
+      border-radius: 5px;
+      color: var(--indigo);
+      font: 500 10px var(--mono);
+      padding: 2px 6px;
+    }
+    .tpl-footer {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px 4px;
+      flex-shrink: 0;
+      border-top: 1px solid var(--b1);
+    }
+    .tpl-foot-btn {
+      flex: 1;
+      padding: 9px 10px;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: 9px;
+      color: var(--dim);
+      font: 500 12px var(--sans);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      text-align: center;
+    }
+    .tpl-foot-btn:active { background: var(--s3); color: var(--text); }
+    .tpl-foot-btn.accent {
+      background: rgba(59,130,246,.15);
+      border-color: rgba(59,130,246,.3);
+      color: var(--accent);
+    }
+    .tpl-foot-btn.accent:active { background: rgba(59,130,246,.28); }
+
+    /* ── TEMPLATE EDITOR MODAL ── */
+    .tpl-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 60;
+      display: none;
+    }
+    .tpl-modal-overlay.open { display: block; }
+    .tpl-modal-box {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--s1);
+      border-radius: 16px 16px 0 0;
+      border-top: 1px solid var(--b2);
+      z-index: 61;
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    .tpl-modal-box.open { transform: translateY(0); }
+    .tpl-modal-handle {
+      width: 36px; height: 4px;
+      background: var(--muted);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .tpl-modal-title {
+      font: 700 14px var(--sans);
+      color: var(--text);
+      padding: 12px 16px 8px;
+      flex-shrink: 0;
+    }
+    .tpl-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tpl-field-label {
+      font: 600 11px var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--dim);
+      margin-bottom: 4px;
+    }
+    .tpl-field-input {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 8px;
+      color: var(--text);
+      font: 400 13px var(--sans);
+      padding: 9px 12px;
+      outline: none;
+    }
+    .tpl-field-input:focus { border-color: var(--accent); }
+    .tpl-field-textarea {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 8px;
+      color: var(--text);
+      font: 400 12px var(--mono);
+      padding: 9px 12px;
+      outline: none;
+      resize: none;
+      min-height: 120px;
+      line-height: 1.5;
+    }
+    .tpl-field-textarea:focus { border-color: var(--accent); }
+    .tpl-ph-hint {
+      font: 400 11px var(--sans);
+      color: var(--dim);
+      line-height: 1.5;
+    }
+    .tpl-ph-hint code {
+      background: var(--s3);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 11px;
+      color: var(--indigo);
+    }
+    .tpl-detected-phs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-height: 22px;
+    }
+    .tpl-modal-footer {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px 4px;
+      flex-shrink: 0;
+      border-top: 1px solid var(--b1);
+    }
+    .tpl-modal-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: 9px;
+      color: var(--dim);
+      font: 500 13px var(--sans);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .tpl-modal-btn:active { background: var(--s3); }
+    .tpl-modal-btn.save {
+      background: rgba(59,130,246,.15);
+      border-color: rgba(59,130,246,.35);
+      color: var(--accent);
+    }
+    .tpl-modal-btn.save:active { background: rgba(59,130,246,.28); }
+
+    /* ── FILL PLACEHOLDERS MODAL ── */
+    .fill-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 70;
+      display: none;
+    }
+    .fill-modal-overlay.open { display: block; }
+    .fill-modal-box {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--s1);
+      border-radius: 16px 16px 0 0;
+      border-top: 1px solid var(--b2);
+      z-index: 71;
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+    .fill-modal-box.open { transform: translateY(0); }
+    .fill-modal-handle {
+      width: 36px; height: 4px;
+      background: var(--muted);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .fill-modal-title {
+      font: 700 14px var(--sans);
+      color: var(--text);
+      padding: 12px 16px 4px;
+      flex-shrink: 0;
+    }
+    .fill-modal-sub {
+      font: 400 12px var(--sans);
+      color: var(--dim);
+      padding: 0 16px 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--b1);
+    }
+    .fill-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fill-field-label {
+      font: 600 12px var(--sans);
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .fill-field-input {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 8px;
+      color: var(--text);
+      font: 400 13px var(--sans);
+      padding: 9px 12px;
+      outline: none;
+    }
+    .fill-field-input:focus { border-color: var(--accent); }
+    .fill-modal-footer {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px 4px;
+      flex-shrink: 0;
+      border-top: 1px solid var(--b1);
+    }
+    .fill-modal-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: 9px;
+      color: var(--dim);
+      font: 500 13px var(--sans);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .fill-modal-btn:active { background: var(--s3); }
+    .fill-modal-btn.apply {
+      background: rgba(34,197,94,.15);
+      border-color: rgba(34,197,94,.3);
+      color: var(--green);
+    }
+    .fill-modal-btn.apply:active { background: rgba(34,197,94,.28); }
+
     /* ── PRESETS SHEET ── */
     .presets-sheet {
       position: fixed;
@@ -1160,6 +1649,19 @@
       padding: 0 4px;
     }
 
+    .sheet-close-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 16px;
+      line-height: 1;
+      padding: 4px 6px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: color .15s, background .15s;
+    }
+    .sheet-close-btn:hover { color: var(--text); background: var(--b1); }
+
     .fm-btn {
       display: flex;
       align-items: center;
@@ -1555,6 +2057,12 @@
         </svg>
         Пресеты
       </button>
+      <button class="tpl-hdr-btn" onclick="openTplSheet()" aria-label="Шаблоны текста">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h7M7 16h5"/>
+        </svg>
+        Шаблоны
+      </button>
       <button class="file-hdr-btn" onclick="openFileMenu()" aria-label="Работа с файлами">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1566,7 +2074,8 @@
 
     <!-- FORMAT: две вкладки Presets / Commands -->
     <div class="fmt-cats" id="fmt-cats">
-      <button class="fmt-cat active" id="fcat-presets" onclick="setFmtTab('presets',this)">Presets</button>
+      <button class="fmt-cat active" id="fcat-suno" onclick="setFmtTab('suno',this)">Suno</button>
+      <button class="fmt-cat" id="fcat-presets" onclick="setFmtTab('presets',this)">Presets</button>
       <button class="fmt-cat" id="fcat-commands" onclick="setFmtTab('commands',this)">Commands</button>
     </div>
     <div class="fmt-btns" id="fmt-btns"></div>
@@ -1778,7 +2287,10 @@
   <div class="fm-overlay" id="rp-overlay" onclick="closeReplaceSheet()"></div>
   <div class="file-menu" id="rp-sheet" style="padding-bottom:env(safe-area-inset-bottom,12px);">
     <div class="fm-handle"></div>
-    <div class="fm-title">Заменить символ</div>
+    <div class="fm-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Заменить символ</span>
+      <button class="sheet-close-btn" onclick="closeReplaceSheet()" aria-label="Закрыть">✕</button>
+    </div>
     <div style="display:flex;flex-direction:column;gap:10px;padding:0 18px 16px;">
       <div class="rp-field">
         <span class="rp-label">что</span>
@@ -1801,6 +2313,76 @@
     </div>
   </div>
 
+  <!-- EDIT TAGS SHEET -->
+  <div class="fm-overlay" id="etags-overlay" onclick="closeEtagsSheet()"></div>
+  <div class="etags-sheet" id="etags-sheet">
+    <div class="etags-handle"></div>
+    <div class="etags-header">
+      <span class="etags-title">🏷 Style Tags</span>
+      <span class="etags-count" id="etags-count"></span>
+      <button class="sheet-close-btn" onclick="closeEtagsSheet()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="etags-body" id="etags-body"></div>
+  </div>
+
+  <!-- TEMPLATES SHEET -->
+  <div class="fm-overlay" id="tpl-overlay" onclick="closeTplSheet()"></div>
+  <div class="tpl-sheet" id="tpl-sheet">
+    <div class="tpl-handle"></div>
+    <div class="tpl-header">
+      <span class="tpl-title">📄 Шаблоны</span>
+      <button class="sheet-close-btn" onclick="closeTplSheet()" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="tpl-body" id="tpl-body"></div>
+    <div class="tpl-footer">
+      <button class="tpl-foot-btn" onclick="exportTplJSON()">⬇ Экспорт</button>
+      <label class="tpl-foot-btn" style="text-align:center;cursor:pointer;">
+        ⬆ Импорт
+        <input type="file" accept=".json" id="tpl-import-input" style="display:none" onchange="importTplJSON(this)">
+      </label>
+      <button class="tpl-foot-btn accent" onclick="openTplModal(null)">+ Добавить</button>
+    </div>
+  </div>
+
+  <!-- TEMPLATE EDITOR MODAL -->
+  <div class="tpl-modal-overlay" id="tpl-modal-overlay" onclick="closeTplModal()"></div>
+  <div class="tpl-modal-box" id="tpl-modal-box">
+    <div class="tpl-modal-handle"></div>
+    <div class="tpl-modal-title" id="tpl-modal-title">Новый шаблон</div>
+    <div class="tpl-modal-body">
+      <div>
+        <div class="tpl-field-label">Название</div>
+        <input class="tpl-field-input" id="tpl-name-input" type="text" placeholder="Например: Трек для Suno" maxlength="60" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <div class="tpl-field-label">Текст шаблона</div>
+        <textarea class="tpl-field-textarea" id="tpl-text-input" placeholder="Напишите текст. Плейсхолдеры: {{название}}, {{артист}}, {{жанр}}&#10;&#10;Пример:&#10;Трек: {{название}}&#10;Артист: {{артист}}&#10;Жанр: {{жанр}}" rows="7" spellcheck="false"></textarea>
+      </div>
+      <div>
+        <div class="tpl-field-label">Плейсхолдеры в тексте</div>
+        <p class="tpl-ph-hint">Используй <code>{{имя}}</code> — при вставке шаблона появится форма для заполнения.</p>
+        <div class="tpl-detected-phs" id="tpl-detected-phs" style="margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="tpl-modal-footer">
+      <button class="tpl-modal-btn" onclick="closeTplModal()">Отмена</button>
+      <button class="tpl-modal-btn save" onclick="saveTplFromModal()">Сохранить</button>
+    </div>
+  </div>
+
+  <!-- FILL PLACEHOLDERS MODAL -->
+  <div class="fill-modal-overlay" id="fill-modal-overlay" onclick="closeFillModal()"></div>
+  <div class="fill-modal-box" id="fill-modal-box">
+    <div class="fill-modal-handle"></div>
+    <div class="fill-modal-title" id="fill-modal-title">Заполнить шаблон</div>
+    <div class="fill-modal-sub" id="fill-modal-sub"></div>
+    <div class="fill-modal-body" id="fill-modal-body"></div>
+    <div class="fill-modal-footer">
+      <button class="fill-modal-btn" onclick="closeFillModal()">Отмена</button>
+      <button class="fill-modal-btn apply" onclick="applyFillModal()">Вставить в редактор</button>
+    </div>
+  </div>
+
   <!-- PRESETS SHEET OVERLAY -->
   <div class="fm-overlay" id="ps-overlay" onclick="closePresetsSheet()"></div>
 
@@ -1809,6 +2391,7 @@
     <div class="ps-handle"></div>
     <div class="ps-header">
       <span class="ps-title">Пресеты и регулярки</span>
+      <button class="sheet-close-btn" onclick="closePresetsSheet()" aria-label="Закрыть">✕</button>
     </div>
     <div class="ps-tabs">
       <button class="ps-tab active" id="ps-tab-presets" onclick="switchPsTab('presets')">⚡ Пресеты</button>
@@ -2145,11 +2728,11 @@
     // TAB SWITCH
     // ══════════════════════════════════════
     function openReplaceSheet() {
-      document.getElementById('rp-overlay').style.display = 'block';
+      document.getElementById('rp-overlay').classList.add('active');
       document.getElementById('rp-sheet').classList.add('open');
     }
     function closeReplaceSheet() {
-      document.getElementById('rp-overlay').style.display = 'none';
+      document.getElementById('rp-overlay').classList.remove('active');
       document.getElementById('rp-sheet').classList.remove('open');
     }
 
@@ -2273,7 +2856,7 @@
 
     let currentFmtCat = 'spaces';
 
-    let currentFmtTab = 'presets'; // 'presets' | 'commands'
+    let currentFmtTab = 'suno'; // 'suno' | 'presets' | 'commands'
 
     function setFmtTab(tab, btn) {
       currentFmtTab = tab;
@@ -2285,6 +2868,21 @@
     function renderFmtBtns() {
       const wrap = document.getElementById('fmt-btns');
       wrap.innerHTML = '';
+
+      if (currentFmtTab === 'suno') {
+        const sunoFns = [
+          { label: 'Only Structure', fn: 'fmt_suno_only_structure' },
+          { label: 'Edit Tags', fn: 'openEtagsSheet' },
+        ];
+        sunoFns.forEach(({ label, fn }) => {
+          const b = document.createElement('button');
+          b.className = 'f-btn';
+          b.textContent = label;
+          b.onclick = () => window[fn]();
+          wrap.appendChild(b);
+        });
+        return;
+      }
 
       if (currentFmtTab === 'presets') {
         const presets = loadPresets();
@@ -2321,6 +2919,181 @@
           wrap.appendChild(b);
         });
       });
+    }
+
+    // ── SUNO FUNCTIONS ──────────────────────────────────────────────
+    // Убирает style tags из квадратных скобок, оставляет только структурный тег
+    // [Chorus | layered vocals | heavy 808s] → [Chorus]
+    function fmt_suno_only_structure() {
+      const result = ed.value.replace(/\[([^\]]+)\]/g, (match, inner) => {
+        const parts = inner.split('|');
+        const structural = parts[0].trim();
+        return structural ? `[${structural}]` : match;
+      });
+      setValue(result);
+      toast('Style tags убраны, структура сохранена');
+    }
+
+    // ── EDIT TAGS ────────────────────────────────────────────────────
+
+    // Структурные теги — первое слово тега должно совпадать с одним из этих
+    const STRUCTURAL_TAGS = new Set([
+      'intro','verse','chorus','outro','bridge','hook',
+      'pre-chorus','post-chorus','breakdown','interlude',
+      'drop','build','refrain','coda','fade','skit','spoken',
+    ]);
+
+    function isStructuralTag(label) {
+      // Считаем тег структурным если первое слово (без цифр) в списке
+      const first = label.trim().toLowerCase().replace(/\s+\d+$/, '').trim();
+      return STRUCTURAL_TAGS.has(first);
+    }
+
+    // Парсит все теги из текста
+    // Возвращает массив { structural, style, raw, count, indices }
+    // indices — массив позиций вхождений в тексте
+    function parseSunoTags(text) {
+      const re = /\[([^\]]+)\]/g;
+      // Сначала собираем все вхождения
+      const all = [];
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        const inner = m[1];
+        const parts = inner.split('|');
+        const structural = parts[0].trim();
+        const style = parts.slice(1).map(s => s.trim()).join(' | ');
+        all.push({ structural, style, raw: m[0], index: m.index });
+      }
+      // Группируем: ключ = raw (весь тег целиком)
+      const map = new Map();
+      all.forEach(item => {
+        if (!map.has(item.raw)) {
+          map.set(item.raw, { structural: item.structural, style: item.style, raw: item.raw, count: 0, indices: [] });
+        }
+        const entry = map.get(item.raw);
+        entry.count++;
+        entry.indices.push(item.index);
+      });
+      // Возвращаем в порядке первого появления
+      const seen = new Set();
+      const result = [];
+      all.forEach(item => {
+        if (!seen.has(item.raw)) {
+          seen.add(item.raw);
+          result.push(map.get(item.raw));
+        }
+      });
+      return result;
+    }
+
+    // Состояние шита: массив { structural, style (редактируемый), raw, count, deleted }
+    let etagsState = [];
+
+    function openEtagsSheet() {
+      const text = ed.value;
+      if (!text.trim()) { toast('Редактор пуст'); return; }
+      const tags = parseSunoTags(text);
+      if (!tags.length) { toast('Теги не найдены'); return; }
+      etagsState = tags.map(t => ({ ...t, currentStyle: t.style, deleted: false }));
+      renderEtagsSheet();
+      document.getElementById('etags-overlay').classList.add('active');
+      document.getElementById('etags-sheet').classList.add('open');
+    }
+
+    function closeEtagsSheet() {
+      document.getElementById('etags-overlay').classList.remove('active');
+      document.getElementById('etags-sheet').classList.remove('open');
+    }
+
+    function renderEtagsSheet() {
+      const body = document.getElementById('etags-body');
+      const countEl = document.getElementById('etags-count');
+      const total = etagsState.reduce((s, t) => s + t.count, 0);
+      const unique = etagsState.length;
+      countEl.textContent = `${total} тег${total===1?'':'ов'}, ${unique} уникальных`;
+
+      body.innerHTML = '';
+      etagsState.forEach((tag, i) => {
+        const card = document.createElement('div');
+        card.className = 'etag-card';
+
+        // Верхняя строка: [Structural] ×N [del]
+        const top = document.createElement('div');
+        top.className = 'etag-card-top';
+
+        const lbl = document.createElement('span');
+        lbl.className = 'etag-struct-label';
+        lbl.textContent = `[${tag.structural}]`;
+        top.appendChild(lbl);
+
+        if (tag.count > 1) {
+          const badge = document.createElement('span');
+          badge.className = 'etag-repeat-badge';
+          badge.textContent = `×${tag.count}`;
+          top.appendChild(badge);
+        }
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'etag-del-btn';
+        delBtn.title = tag.deleted ? 'Восстановить' : 'Удалить style tags';
+        delBtn.textContent = tag.deleted ? '↩' : '✕';
+        delBtn.onclick = () => {
+          etagsState[i].deleted = !etagsState[i].deleted;
+          applyEtagsLive();
+          renderEtagsSheet();
+        };
+        top.appendChild(delBtn);
+        card.appendChild(top);
+
+        // Только если тег не является чисто структурным (есть style)
+        if (tag.style || tag.currentStyle) {
+          const ta = document.createElement('textarea');
+          ta.className = 'etag-style-input' + (tag.deleted ? ' deleted' : '');
+          ta.value = tag.currentStyle;
+          ta.rows = 1;
+          ta.spellcheck = false;
+          ta.autocomplete = 'off';
+          // Auto-resize
+          ta.addEventListener('input', () => {
+            ta.style.height = 'auto';
+            ta.style.height = Math.min(ta.scrollHeight, 80) + 'px';
+            etagsState[i].currentStyle = ta.value;
+            applyEtagsLive();
+          });
+          // Init height
+          requestAnimationFrame(() => {
+            ta.style.height = 'auto';
+            ta.style.height = Math.min(ta.scrollHeight, 80) + 'px';
+          });
+          card.appendChild(ta);
+        }
+
+        body.appendChild(card);
+      });
+    }
+
+    // Применяет текущее состояние etagsState к тексту редактора
+    function applyEtagsLive() {
+      let text = ed.value;
+      // Обрабатываем каждую группу тегов
+      etagsState.forEach(tag => {
+        const escaped = tag.raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp(escaped, 'g');
+        let replacement;
+        if (tag.deleted) {
+          // Удалить style — оставить только [structural]
+          replacement = `[${tag.structural}]`;
+        } else {
+          const newStyle = tag.currentStyle.trim();
+          replacement = newStyle
+            ? `[${tag.structural} | ${newStyle}]`
+            : `[${tag.structural}]`;
+        }
+        text = text.replace(re, replacement);
+      });
+      // Используем прямое присвоение чтобы не добавлять в историю при каждом символе
+      ed.value = text;
+      updateStats();
     }
 
     // Рендерит пресеты как pills в строке категорий
@@ -2907,6 +3680,7 @@
 
     // --- Pure text transformers for presets (text → text, no side effects) ---
     const FMT_ACTION_MAP = {
+      fmt_suno_only_structure: { label: 'Only Structure', fn: v => v.replace(/\[([^\]]+)\]/g, (m, inner) => { const s = inner.split('|')[0].trim(); return s ? `[${s}]` : m; }) },
       fmt_spaces:        { label: '×2 пробелы',       fn: v => v.replace(/[ \t]{2,}/g, ' ') },
       fmt_nbsp:          { label: 'Неразрывные',       fn: v => v.replace(/\u00A0/g, ' ') },
       fmt_trim:          { label: 'Обрезать края',     fn: v => v.split('\n').map(l => l.trim()).join('\n') },
@@ -2928,14 +3702,14 @@
     let psCurrentTab = 'presets';
 
     function openPresetsSheet() {
-      document.getElementById('ps-overlay').style.display = 'block';
+      document.getElementById('ps-overlay').classList.add('active');
       const sheet = document.getElementById('presets-sheet');
       sheet.classList.add('open');
       renderPresetsTab();
       renderRegexTab();
     }
     function closePresetsSheet() {
-      document.getElementById('ps-overlay').style.display = 'none';
+      document.getElementById('ps-overlay').classList.remove('active');
       document.getElementById('presets-sheet').classList.remove('open');
     }
     function switchPsTab(tab) {
@@ -3405,6 +4179,218 @@
           renderRegexTab();
           renderFmtBtns();
           toast(`Импортировано: ${(data.presets||[]).length} пресетов, ${(data.regex||[]).length} регулярок`);
+        } catch(err) {
+          toast('Ошибка импорта: ' + err.message);
+        }
+        input.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    // ══════════════════════════════════════
+    // TEMPLATES
+    // ══════════════════════════════════════
+
+    function loadTemplates() {
+      try { return JSON.parse(localStorage.getItem('edit_templates_v1') || '[]'); } catch { return []; }
+    }
+    function saveTemplates(list) {
+      localStorage.setItem('edit_templates_v1', JSON.stringify(list));
+    }
+
+    // --- Sheet open/close ---
+    function openTplSheet() {
+      document.getElementById('tpl-overlay').classList.add('active');
+      document.getElementById('tpl-sheet').classList.add('open');
+      renderTplSheet();
+    }
+    function closeTplSheet() {
+      document.getElementById('tpl-overlay').classList.remove('active');
+      document.getElementById('tpl-sheet').classList.remove('open');
+    }
+
+    // --- Render sheet ---
+    function renderTplSheet() {
+      const list = loadTemplates();
+      const body = document.getElementById('tpl-body');
+      if (!list.length) {
+        body.innerHTML = '<p class="tpl-empty">Шаблонов пока нет.<br>Нажми «+ Добавить» чтобы создать первый.</p>';
+        return;
+      }
+      body.innerHTML = list.map((t, i) => {
+        const phs = extractPlaceholders(t.text);
+        const phChips = phs.map(p => `<span class="tpl-ph-chip">{{${p}}}</span>`).join('');
+        const preview = t.text.replace(/\n/g, ' ').slice(0, 60) + (t.text.length > 60 ? '…' : '');
+        return `<div class="tpl-item">
+          <div class="tpl-item-top">
+            <span class="tpl-item-name">📄 ${esc(t.name)}</span>
+            <button class="tpl-use-btn" onclick="useTpl(${i})">▶ Вставить</button>
+            <button class="tpl-icon-btn" onclick="openTplModal(${i})" title="Редактировать">✏</button>
+            <button class="tpl-icon-btn danger" onclick="deleteTpl(${i})" title="Удалить">✕</button>
+          </div>
+          <div class="tpl-preview">${esc(preview)}</div>
+          ${phs.length ? `<div class="tpl-chips">${phChips}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function esc(s) { return escHtml(s); }
+
+    // --- Extract placeholders ---
+    function extractPlaceholders(text) {
+      const found = [];
+      const re = /\{\{([^}]+)\}\}/g;
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        const name = m[1].trim();
+        if (name && !found.includes(name)) found.push(name);
+      }
+      return found;
+    }
+
+    // --- Use template ---
+    function useTpl(idx) {
+      const list = loadTemplates();
+      const tpl = list[idx];
+      if (!tpl) return;
+      const phs = extractPlaceholders(tpl.text);
+      if (phs.length === 0) {
+        // No placeholders — insert directly
+        setEditorText(tpl.text);
+        closeTplSheet();
+        toast(`Шаблон «${tpl.name}» вставлен`);
+      } else {
+        // Open fill modal
+        closeTplSheet();
+        openFillModal(tpl, phs);
+      }
+    }
+
+    // --- Delete template ---
+    function deleteTpl(idx) {
+      const list = loadTemplates();
+      list.splice(idx, 1);
+      saveTemplates(list);
+      renderTplSheet();
+      toast('Шаблон удалён');
+    }
+
+    // --- Template editor modal ---
+    let tplEditIdx = null;
+
+    function openTplModal(idx) {
+      tplEditIdx = idx;
+      const list = loadTemplates();
+      const tpl = idx !== null ? list[idx] : null;
+      document.getElementById('tpl-modal-title').textContent = tpl ? 'Редактировать шаблон' : 'Новый шаблон';
+      document.getElementById('tpl-name-input').value = tpl ? tpl.name : '';
+      document.getElementById('tpl-text-input').value = tpl ? tpl.text : '';
+      updateDetectedPhs();
+      document.getElementById('tpl-modal-overlay').classList.add('open');
+      document.getElementById('tpl-modal-box').classList.add('open');
+      setTimeout(() => document.getElementById('tpl-name-input').focus(), 350);
+    }
+    function closeTplModal() {
+      document.getElementById('tpl-modal-overlay').classList.remove('open');
+      document.getElementById('tpl-modal-box').classList.remove('open');
+    }
+    function saveTplFromModal() {
+      const name = document.getElementById('tpl-name-input').value.trim();
+      const text = document.getElementById('tpl-text-input').value;
+      if (!name) { toast('Укажи название шаблона'); return; }
+      if (!text.trim()) { toast('Текст шаблона не может быть пустым'); return; }
+      const list = loadTemplates();
+      const entry = { name, text, ts: Date.now() };
+      if (tplEditIdx !== null) {
+        list[tplEditIdx] = entry;
+      } else {
+        list.push(entry);
+      }
+      saveTemplates(list);
+      closeTplModal();
+      renderTplSheet();
+      toast(tplEditIdx !== null ? 'Шаблон обновлён' : 'Шаблон сохранён');
+    }
+
+    // Live placeholder detection in textarea
+    document.getElementById('tpl-text-input').addEventListener('input', updateDetectedPhs);
+    function updateDetectedPhs() {
+      const text = document.getElementById('tpl-text-input').value;
+      const phs = extractPlaceholders(text);
+      const cont = document.getElementById('tpl-detected-phs');
+      if (!phs.length) {
+        cont.innerHTML = '<span style="font:400 11px var(--sans);color:var(--muted);">Пока нет</span>';
+      } else {
+        cont.innerHTML = phs.map(p => `<span class="tpl-ph-chip">{{${esc(p)}}}</span>`).join('');
+      }
+    }
+
+    // --- Fill placeholders modal ---
+    let fillTpl = null;
+
+    function openFillModal(tpl, phs) {
+      fillTpl = tpl;
+      document.getElementById('fill-modal-title').textContent = `📄 ${tpl.name}`;
+      document.getElementById('fill-modal-sub').textContent = `Заполни ${phs.length} плейсхолдер${phs.length === 1 ? '' : phs.length < 5 ? 'а' : 'ов'}`;
+      const body = document.getElementById('fill-modal-body');
+      body.innerHTML = phs.map(p => `
+        <div>
+          <div class="fill-field-label">{{${esc(p)}}}</div>
+          <input class="fill-field-input" data-ph="${esc(p)}" type="text" placeholder="${esc(p)}" autocomplete="off" spellcheck="false">
+        </div>
+      `).join('');
+      document.getElementById('fill-modal-overlay').classList.add('open');
+      document.getElementById('fill-modal-box').classList.add('open');
+      setTimeout(() => body.querySelector('input')?.focus(), 350);
+    }
+    function closeFillModal() {
+      document.getElementById('fill-modal-overlay').classList.remove('open');
+      document.getElementById('fill-modal-box').classList.remove('open');
+      fillTpl = null;
+    }
+    function applyFillModal() {
+      if (!fillTpl) return;
+      const inputs = document.querySelectorAll('#fill-modal-body .fill-field-input');
+      let result = fillTpl.text;
+      inputs.forEach(inp => {
+        const ph = inp.getAttribute('data-ph');
+        const val = inp.value; // empty = keep placeholder or replace with empty
+        result = result.split(`{{${ph}}}`).join(val);
+      });
+      setEditorText(result);
+      closeFillModal();
+      toast(`Шаблон «${fillTpl.name}» вставлен`);
+    }
+
+    // --- Helper: set editor text ---
+    function setEditorText(text) {
+      setValue(text);
+    }
+
+    // --- Export/Import ---
+    function exportTplJSON() {
+      const list = loadTemplates();
+      if (!list.length) { toast('Нет шаблонов для экспорта'); return; }
+      const blob = new Blob([JSON.stringify({ templates: list }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'edit-templates.json';
+      a.click();
+    }
+    function importTplJSON(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.templates && Array.isArray(data.templates)) {
+            saveTemplates(data.templates);
+            renderTplSheet();
+            toast(`Импортировано: ${data.templates.length} шаблонов`);
+          } else {
+            toast('Неверный формат файла');
+          }
         } catch(err) {
           toast('Ошибка импорта: ' + err.message);
         }
