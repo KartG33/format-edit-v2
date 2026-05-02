@@ -560,6 +560,57 @@
       color: #fff;
     }
 
+    /* Разделитель категорий внутри плоской строки */
+    .fmt-cat-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--b2);
+      flex-shrink: 0;
+      align-self: center;
+      margin: 0 2px;
+    }
+    /* Лейбл категории перед группой кнопок */
+    .fmt-cat-label {
+      font: 600 9px var(--sans);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      flex-shrink: 0;
+      align-self: center;
+      padding: 0 2px;
+      white-space: nowrap;
+    }
+
+    /* Кнопка Заменить в sym-head */
+    .sym-replace-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      padding: 3px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--b2);
+      background: transparent;
+      color: var(--dim);
+      font: 500 11px var(--sans);
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .sym-replace-btn:active {
+      background: var(--s3);
+      color: var(--text);
+    }
+
+    .f-btn.preset-pill-btn {
+      border-color: rgba(99,102,241,.35);
+      color: var(--indigo);
+      background: rgba(99,102,241,.08);
+    }
+    .f-btn.preset-pill-btn:active {
+      background: rgba(99,102,241,.25);
+    }
+
     .fmt-cat.preset-pill {
       border-color: rgba(99,102,241,.35);
       color: var(--indigo);
@@ -611,18 +662,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 16px;
-      border-radius: 9px;
+      padding: 5px 11px;
+      border-radius: 7px;
       background: var(--s2);
       border: 1px solid var(--b1);
       color: var(--dim);
       font-family: var(--sans);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
       transition: all .12s;
-      min-height: 38px;
+      min-height: 30px;
     }
 
     .f-btn:active {
@@ -1513,14 +1564,11 @@
       </button>
     </div>
 
-    <!-- FORMAT: категории -->
+    <!-- FORMAT: две вкладки Presets / Commands -->
     <div class="fmt-cats" id="fmt-cats">
-      <button class="fmt-cat active" onclick="setFmtCat('spaces',this)" aria-label="Пробелы">Пробелы</button>
-      <button class="fmt-cat" onclick="setFmtCat('register',this)" aria-label="Регистр">Регистр</button>
-      <button class="fmt-cat" onclick="setFmtCat('punct',this)" aria-label="Пунктуация">Пунктуация</button>
-      <button class="fmt-cat" onclick="setFmtCat('struct',this)" aria-label="Структура">Структура</button>
+      <button class="fmt-cat active" id="fcat-presets" onclick="setFmtTab('presets',this)">Presets</button>
+      <button class="fmt-cat" id="fcat-commands" onclick="setFmtTab('commands',this)">Commands</button>
     </div>
-    <!-- FORMAT: кнопки выбранной категории -->
     <div class="fmt-btns" id="fmt-btns"></div>
   </div>
 
@@ -1533,44 +1581,15 @@
       </svg>
       Символы
       <span class="sym-badge" id="sym-n">0</span>
+      <button class="sym-replace-btn" onclick="openReplaceSheet()" aria-label="Заменить символ">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+        </svg>
+        Заменить
+      </button>
     </div>
-
-    <!-- TAB SWITCHER — full width -->
-    <div class="sym-tabs">
-      <button class="sym-tab active" id="tab-detect" onclick="switchTab('detect')"
-        aria-label="Удалить символы">Удалить</button>
-      <button class="sym-tab" id="tab-replace" onclick="switchTab('replace')"
-        aria-label="Заменить символы">Заменить</button>
-    </div>
-
-    <!-- DETECT TAB -->
     <div class="sym-scroll" id="sym-scroll">
       <span class="sym-empty">Не найдено</span>
-    </div>
-
-    <!-- REPLACE TAB -->
-    <div class="replace-panel" id="replace-panel">
-      <div class="rp-field">
-        <span class="rp-label">что</span>
-        <input id="rp-from" type="text" placeholder="символ для замены" maxlength="50" autocomplete="off"
-          spellcheck="false">
-      </div>
-      <div class="rp-field">
-        <span class="rp-label">на</span>
-        <input id="rp-to" type="text" placeholder="чем заменить" maxlength="50" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="rp-pair-hint" id="rp-pair-hint"></div>
-      <div class="rp-row">
-        <button class="rp-btn" onclick="doReplace()" aria-label="Выполнить замену">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path
-              d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-          </svg>
-          Заменить
-        </button>
-        <button class="rp-btn clear-btn" onclick="clearReplace()" aria-label="Очистить поля замены"
-          title="Очистить поля">✕</button>
-      </div>
     </div>
   </div>
 
@@ -1751,6 +1770,33 @@
       <div class="nm-list" id="nm-sheet-hist-list"></div>
       <div class="nm-footer">
         <button class="nm-foot-btn danger" onclick="clearHistory()">🗑 Очистить историю</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPLACE SHEET -->
+  <div class="fm-overlay" id="rp-overlay" onclick="closeReplaceSheet()"></div>
+  <div class="file-menu" id="rp-sheet" style="padding-bottom:env(safe-area-inset-bottom,12px);">
+    <div class="fm-handle"></div>
+    <div class="fm-title">Заменить символ</div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding:0 18px 16px;">
+      <div class="rp-field">
+        <span class="rp-label">что</span>
+        <input id="rp-from" type="text" placeholder="символ для замены" maxlength="50" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="rp-field">
+        <span class="rp-label">на</span>
+        <input id="rp-to" type="text" placeholder="чем заменить (пусто = удалить)" maxlength="50" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="rp-pair-hint" id="rp-pair-hint"></div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="rp-btn" style="flex:1;" onclick="doReplace();closeReplaceSheet();" aria-label="Выполнить замену">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          Заменить
+        </button>
+        <button class="rp-btn clear-btn" onclick="clearReplace()" title="Очистить поля">✕</button>
       </div>
     </div>
   </div>
@@ -2098,13 +2144,13 @@
     // ══════════════════════════════════════
     // TAB SWITCH
     // ══════════════════════════════════════
-    function switchTab(tab) {
-      currentTab = tab;
-      document.getElementById('tab-detect').classList.toggle('active', tab === 'detect');
-      document.getElementById('tab-replace').classList.toggle('active', tab === 'replace');
-      document.getElementById('sym-scroll').style.display = tab === 'detect' ? 'flex' : 'none';
-      document.getElementById('replace-panel').classList.toggle('active', tab === 'replace');
-      if (tab === 'detect') render();
+    function openReplaceSheet() {
+      document.getElementById('rp-overlay').style.display = 'block';
+      document.getElementById('rp-sheet').classList.add('open');
+    }
+    function closeReplaceSheet() {
+      document.getElementById('rp-overlay').style.display = 'none';
+      document.getElementById('rp-sheet').classList.remove('open');
     }
 
     // ══════════════════════════════════════
@@ -2227,57 +2273,57 @@
 
     let currentFmtCat = 'spaces';
 
-    let currentPresetIdx = null; // null = обычная категория, number = пресет
+    let currentFmtTab = 'presets'; // 'presets' | 'commands'
 
-    function setFmtCat(cat, btn) {
-      currentFmtCat = cat;
-      currentPresetIdx = null;
+    function setFmtTab(tab, btn) {
+      currentFmtTab = tab;
       document.querySelectorAll('.fmt-cat').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderFmtBtns();
     }
 
-    function setFmtPreset(idx, btn) {
-      // Сразу запускаем пресет, не переключаем категорию
-      runPreset(idx);
-    }
-
     function renderFmtBtns() {
       const wrap = document.getElementById('fmt-btns');
       wrap.innerHTML = '';
-      FMT_CATS[currentFmtCat].forEach(({ label, fn }) => {
-        const b = document.createElement('button');
-        b.className = 'f-btn';
-        b.textContent = label;
-        b.onclick = () => window[fn]();
-        wrap.appendChild(b);
+
+      if (currentFmtTab === 'presets') {
+        const presets = loadPresets();
+        if (!presets.length) {
+          const empty = document.createElement('span');
+          empty.style.cssText = 'color:var(--dim);font:400 11px var(--sans);padding:4px 2px;align-self:center;white-space:nowrap;';
+          empty.textContent = 'Нет пресетов — создай в разделе Пресеты';
+          wrap.appendChild(empty);
+          return;
+        }
+        presets.forEach((p, i) => {
+          const b = document.createElement('button');
+          b.className = 'f-btn preset-pill-btn';
+          b.textContent = '⚡ ' + p.name;
+          b.onclick = () => runPreset(i);
+          wrap.appendChild(b);
+        });
+        return;
+      }
+
+      // Commands — все кнопки всех категорий подряд с разделителями
+      const catEntries = Object.entries(FMT_CATS);
+      catEntries.forEach(([, items], ci) => {
+        if (ci > 0) {
+          const sep = document.createElement('div');
+          sep.className = 'fmt-cat-sep';
+          wrap.appendChild(sep);
+        }
+        items.forEach(({ label, fn }) => {
+          const b = document.createElement('button');
+          b.className = 'f-btn';
+          b.textContent = label;
+          b.onclick = () => window[fn]();
+          wrap.appendChild(b);
+        });
       });
     }
 
     // Рендерит пресеты как pills в строке категорий
-    function renderPresetPills() {
-      const cats = document.getElementById('fmt-cats');
-      // Убираем старые пресет-pills и разделитель
-      cats.querySelectorAll('.preset-pill, .fmt-cat-divider').forEach(el => el.remove());
-
-      const presets = loadPresets();
-      if (!presets.length) return;
-
-      const divider = document.createElement('div');
-      divider.className = 'fmt-cat-divider';
-      cats.appendChild(divider);
-
-      presets.forEach((p, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'fmt-cat preset-pill';
-        btn.textContent = '⚡ ' + p.name;
-        btn.setAttribute('aria-label', 'Пресет: ' + p.name);
-        btn.onclick = () => setFmtPreset(i, btn);
-        cats.appendChild(btn);
-      });
-    }
-
-
     function fmt_spaces() { setValue(ed.value.replace(/[ \t]{2,}/g, ' ')); toast('Двойные пробелы убраны'); }
     function fmt_lines() { setValue(ed.value.replace(/\n{3,}/g, '\n\n')); toast('Лишние строки удалены'); }
     function fmt_trim() { setValue(ed.value.split('\n').map(l => l.trim()).join('\n')); toast('Края строк обрезаны'); }
@@ -2842,7 +2888,6 @@
     renderFmtBtns();
     render();
     renderSavedList(); // sidebar desktop
-    renderPresetPills(); // пресеты в pill-switcher
     // Авто-имя в sidebar
     const _sbn = document.getElementById('nm-name');
     if (_sbn) _sbn.value = autoName();
@@ -3037,7 +3082,7 @@
       list.splice(idx, 1);
       savePresets(list);
       renderPresetsTab();
-      renderPresetPills();
+      renderFmtBtns();
       toast(`Удалён: «${name}»`);
     }
     function deleteRegex(idx) {
@@ -3247,7 +3292,7 @@
       savePresets(list);
       closePresetModal();
       renderPresetsTab();
-      renderPresetPills();
+      renderFmtBtns();
       toast(pmEditIdx !== null ? `Пресет обновлён` : `Пресет «${name}» сохранён`);
     }
 
@@ -3358,7 +3403,7 @@
           if (data.regex)   saveRegexList(data.regex);
           renderPresetsTab();
           renderRegexTab();
-          renderPresetPills();
+          renderFmtBtns();
           toast(`Импортировано: ${(data.presets||[]).length} пресетов, ${(data.regex||[]).length} регулярок`);
         } catch(err) {
           toast('Ошибка импорта: ' + err.message);
