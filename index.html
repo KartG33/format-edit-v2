@@ -560,6 +560,35 @@
       color: #fff;
     }
 
+    .fmt-cat.preset-pill {
+      border-color: rgba(99,102,241,.35);
+      color: var(--indigo);
+      background: rgba(99,102,241,.08);
+    }
+    .fmt-cat.preset-pill.active {
+      background: var(--indigo);
+      border-color: var(--indigo);
+      color: #fff;
+    }
+    /* Кнопка запуска пресета в fmt-btns */
+    .f-btn.run-preset-btn {
+      background: rgba(99,102,241,.18);
+      border-color: rgba(99,102,241,.45);
+      color: var(--indigo);
+      font-weight: 700;
+    }
+    .f-btn.run-preset-btn:active {
+      background: rgba(99,102,241,.35);
+    }
+    /* Разделитель между категориями и пресетами */
+    .fmt-cat-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--b2);
+      flex-shrink: 0;
+      align-self: center;
+    }
+
     .fmt-cat:active {
       opacity: .8;
     }
@@ -2198,11 +2227,19 @@
 
     let currentFmtCat = 'spaces';
 
+    let currentPresetIdx = null; // null = обычная категория, number = пресет
+
     function setFmtCat(cat, btn) {
       currentFmtCat = cat;
+      currentPresetIdx = null;
       document.querySelectorAll('.fmt-cat').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderFmtBtns();
+    }
+
+    function setFmtPreset(idx, btn) {
+      // Сразу запускаем пресет, не переключаем категорию
+      runPreset(idx);
     }
 
     function renderFmtBtns() {
@@ -2214,6 +2251,29 @@
         b.textContent = label;
         b.onclick = () => window[fn]();
         wrap.appendChild(b);
+      });
+    }
+
+    // Рендерит пресеты как pills в строке категорий
+    function renderPresetPills() {
+      const cats = document.getElementById('fmt-cats');
+      // Убираем старые пресет-pills и разделитель
+      cats.querySelectorAll('.preset-pill, .fmt-cat-divider').forEach(el => el.remove());
+
+      const presets = loadPresets();
+      if (!presets.length) return;
+
+      const divider = document.createElement('div');
+      divider.className = 'fmt-cat-divider';
+      cats.appendChild(divider);
+
+      presets.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'fmt-cat preset-pill';
+        btn.textContent = '⚡ ' + p.name;
+        btn.setAttribute('aria-label', 'Пресет: ' + p.name);
+        btn.onclick = () => setFmtPreset(i, btn);
+        cats.appendChild(btn);
       });
     }
 
@@ -2782,6 +2842,7 @@
     renderFmtBtns();
     render();
     renderSavedList(); // sidebar desktop
+    renderPresetPills(); // пресеты в pill-switcher
     // Авто-имя в sidebar
     const _sbn = document.getElementById('nm-name');
     if (_sbn) _sbn.value = autoName();
@@ -2951,7 +3012,8 @@
         }
       });
       setValue(v);
-      closePresetsSheet();
+      // Закрываем sheet только если он открыт
+      if (document.getElementById('presets-sheet').classList.contains('open')) closePresetsSheet();
       toast(`✓ «${p.name}» — ${applied} шаг${applied===1?'':applied<5?'а':'ов'}`);
     }
 
@@ -2975,6 +3037,7 @@
       list.splice(idx, 1);
       savePresets(list);
       renderPresetsTab();
+      renderPresetPills();
       toast(`Удалён: «${name}»`);
     }
     function deleteRegex(idx) {
@@ -3184,6 +3247,7 @@
       savePresets(list);
       closePresetModal();
       renderPresetsTab();
+      renderPresetPills();
       toast(pmEditIdx !== null ? `Пресет обновлён` : `Пресет «${name}» сохранён`);
     }
 
@@ -3294,6 +3358,7 @@
           if (data.regex)   saveRegexList(data.regex);
           renderPresetsTab();
           renderRegexTab();
+          renderPresetPills();
           toast(`Импортировано: ${(data.presets||[]).length} пресетов, ${(data.regex||[]).length} регулярок`);
         } catch(err) {
           toast('Ошибка импорта: ' + err.message);
